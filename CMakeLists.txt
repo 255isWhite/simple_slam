@@ -11,16 +11,24 @@ find_package(rclcpp REQUIRED)
 find_package(Ceres REQUIRED)
 find_package(PCL REQUIRED)
 find_package(Eigen3 REQUIRED)
+find_package(pcl_conversions REQUIRED)
 
 include_directories(
+  include
   ${PCL_INCLUDE_DIRS}
-  ${PROJECT_SOURCE_DIRS}/include
   ${EIGEN3_INCLUDE_DIRS}
 )
 
 add_executable(
   slam
   src/main.cc
+  src/mainstream.cc
+)
+
+ament_target_dependencies(
+  slam
+  ament_cmake sensor_msgs std_msgs
+  rclcpp Ceres PCL Eigen3 pcl_conversions
 )
 
 target_link_libraries(
