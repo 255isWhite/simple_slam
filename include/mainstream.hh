@@ -15,6 +15,7 @@ class mainstream : public rclcpp::Node{
         void LaserCallback(const sensor_msgs::msg::LaserScan::ConstSharedPtr& msg);
         void Laser2PCL(const sensor_msgs::msg::LaserScan::ConstSharedPtr& msg);
         void ComputeAngle(const sensor_msgs::msg::LaserScan::ConstSharedPtr& msg);
+        void ICP();
 
     private:
         cloudT::Ptr current_cloud_;
