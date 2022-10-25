@@ -24,12 +24,12 @@ void mainstream::LaserCallback(const sensor_msgs::msg::LaserScan::ConstSharedPtr
 
 void mainstream::ComputeAngle(const sensor_msgs::msg::LaserScan::ConstSharedPtr& msg){
     num_total = msg->ranges.size();
-    angle_cos.resize(num_total);
-    angle_sin.resize(num_total);
+    angle_cos_.resize(num_total);
+    angle_sin_.resize(num_total);
     for(size_t i=0;i<num_total;++i){
         float angle = msg->angle_min + i * msg->angle_increment;
-        angle_cos[i] = std::cos(angle);
-        angle_sin[i] = std::sin(angle);
+        angle_cos_[i] = std::cos(angle);
+        angle_sin_[i] = std::sin(angle);
     }
 }
 
@@ -47,8 +47,8 @@ void mainstream::Laser2PCL(const sensor_msgs::msg::LaserScan::ConstSharedPtr& ms
         }
 
         if(range>msg->range_min && range<msg->range_max){
-            pt.x = range * angle_cos[i];
-            pt.y = range * angle_sin[i];
+            pt.x = range * angle_cos_[i];
+            pt.y = range * angle_sin_[i];
             pt.z = .0f;
         }
     }
@@ -68,13 +68,15 @@ void mainstream::ICP(){
     icp.setInputTarget(last_cloud_);
 
     icp.setMaxCorrespondenceDistance(1.0);
-    icp.setMaximumIterations(10);
+    icp.setMaximumIterations(50);
     icp.setTransformationEpsilon(1e-8);
     icp.setEuclideanFitnessEpsilon(1.f);
 
     icp.align(icp_cloud);
     Eigen::Matrix4f T = icp.getFinalTransformation();
+    pose_ = T*pose_;
     std::cout<<"[ICP] has convrged: "<<icp.hasConverged()<<std::endl;
     std::cout<<"[ICP] score: "<<icp.getFitnessScore()<<std::endl;
     std::cout<<"[ICP] Matrix T: \n"<<T<<std::endl;
+    std::cout<<"[ICP] Matrix pose: \n"<<pose_<<std::endl;
 }

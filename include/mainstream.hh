@@ -23,8 +23,9 @@ class mainstream : public rclcpp::Node{
         bool is_first_frame_ = true;
         size_t num_nan = 0;
         size_t num_total = 0;
-        std::vector<float> angle_cos;
-        std::vector<float> angle_sin;
+        std::vector<float> angle_cos_;
+        std::vector<float> angle_sin_;
+        Eigen::Matrix4f pose_ = Eigen::Matrix4f::Identity();
 
 };
 }
